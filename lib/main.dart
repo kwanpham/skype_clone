@@ -1,10 +1,11 @@
-
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:faker/faker.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:skype_clone/resources/firebase_repository.dart';
+import 'package:skype_clone/screens/home_screen.dart';
+import 'package:skype_clone/screens/login_screen.dart';
 
-void main()  async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(MyApp());
@@ -16,56 +17,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  FireBaseRepository _repository = FireBaseRepository();
+
   @override
   Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-    var faker = new Faker();
-    for (int i =0 ; i<100 ; i++) {
-      users..add({
-      'full_name': faker.person.name(), // John Doe
-      'company': faker.company.name(), // Stokes and Sons
-      'age': faker.randomGenerator.integer(99) // 42
-      })
-          .then((value) => print("User Added " + value.id))
-          .catchError((error) => print("Failed to add user: $error"));
-    }
-
-
     return MaterialApp(
-      home: Scaffold(
-        body: Container(
-          child: UserInformation(),
-        ),
+      title: "Skype Clone",
+      debugShowCheckedModeBanner: false,
+      home: FutureBuilder(
+        future: _repository.getCurrentUser(),
+        builder: (context, AsyncSnapshot<User> snapshot) {
+          if (snapshot.hasData) {
+            return HomeScreen();
+          } else {
+            return LoginScreen();
+          }
+        },
       ),
-    );
-  }
-}
-
-class UserInformation extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    CollectionReference users = FirebaseFirestore.instance.collection('users');
-
-    return StreamBuilder<QuerySnapshot>(
-      stream: users.snapshots(),
-      builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.hasError) {
-          return Text('Something went wrong');
-        }
-
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return Text("Loading");
-        }
-
-        return new ListView(
-          children: snapshot.data.docs.map((DocumentSnapshot document) {
-            return new ListTile(
-              title: new Text(document.data()['full_name']),
-              subtitle: new Text(document.data()['company']),
-            );
-          }).toList(),
-        );
-      },
     );
   }
 }
