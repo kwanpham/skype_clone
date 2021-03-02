@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "739424968268",
+    "firebase_url": "https://skypeclone-75bcb-default-rtdb.firebaseio.com",
     "project_id": "skypeclone-75bcb",
     "storage_bucket": "skypeclone-75bcb.appspot.com"
   },
@@ -13,6 +14,14 @@
         }
       },
       "oauth_client": [
+        {
+          "client_id": "739424968268-ba2fsrh26qat484n6vfm9sts0gho6i5j.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "quan.dev.skype_clone",
+            "certificate_hash": "bb7ff5012a5d3ca80bfcad419407822a7acf0db2"
+          }
+        },
         {
           "client_id": "739424968268-ttjdchc717nq42s4j14ml2p5uus789ql.apps.googleusercontent.com",
           "client_type": 3
