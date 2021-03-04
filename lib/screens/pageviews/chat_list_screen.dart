@@ -47,7 +47,9 @@ class _ChatListScreenState extends State<ChatListScreen> {
             Icons.search,
             color: Colors.white,
           ),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.pushNamed(context, "/search_screen");
+          },
         ),
         IconButton(
           icon: Icon(
@@ -156,7 +158,7 @@ class UserCircle extends StatelessWidget {
           Align(
             alignment: Alignment.center,
             child: Text(
-              text,
+              text == null ? "123" : text,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 color: UniversalVariables.lightBlueColor,
