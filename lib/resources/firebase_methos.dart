@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:skype_clone/models/message.dart';
 import 'package:skype_clone/models/user.dart';
 import 'package:skype_clone/utils/utilities.dart';
 
@@ -17,7 +18,8 @@ class FirebaseMethods {
 
   Future<User> signIn() async {
     GoogleSignInAccount _signInAccount = await _googleSignIn.signIn();
-    GoogleSignInAuthentication _signInAuthentication = await _signInAccount.authentication;
+    GoogleSignInAuthentication _signInAuthentication =
+        await _signInAccount.authentication;
 
     final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: _signInAuthentication.accessToken,
@@ -65,8 +67,7 @@ class FirebaseMethods {
   Future<List<UserModel>> fetchAllUsers(User currentUser) async {
     List<UserModel> userList = List<UserModel>();
 
-    QuerySnapshot querySnapshot =
-    await firestore.collection("users").get();
+    QuerySnapshot querySnapshot = await firestore.collection("users").get();
     for (var i = 0; i < querySnapshot.docs.length; i++) {
       if (querySnapshot.docs[i].id != currentUser.uid) {
         userList.add(UserModel.fromMap(querySnapshot.docs[i].data()));
@@ -76,4 +77,20 @@ class FirebaseMethods {
     return userList;
   }
 
+  Future<void> addMessageToDb(
+      Message message, UserModel sender, UserModel receiver) async {
+    var map = message.toMap();
+
+    await firestore
+        .collection("messages")
+        .doc(message.senderId)
+        .collection(message.receiverId)
+        .add(map);
+
+    return await firestore
+        .collection("messages")
+        .doc(message.receiverId)
+        .collection(message.senderId)
+        .add(map);
+  }
 }
